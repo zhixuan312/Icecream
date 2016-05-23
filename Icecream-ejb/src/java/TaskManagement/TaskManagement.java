@@ -34,7 +34,7 @@ public class TaskManagement implements TaskManagementRemote, TaskManagementLocal
     @Override
     public Task retrieveTaskByTaskId(Long taskId) {
         try {
-            String jpql = "SELECT t FROM Task e WHERE t.taskId = " + "'" + taskId + "'";
+            String jpql = "SELECT t FROM Task t WHERE t.taskId = " + "'" + taskId + "'";
             Query query = em.createQuery(jpql);
             return (Task) query.getSingleResult();
         } catch (NoResultException ex) {
@@ -72,7 +72,7 @@ public class TaskManagement implements TaskManagementRemote, TaskManagementLocal
     public List<Task> retrieveTasksByEmployeeId(Long employeeId) {
         List<Task> tasks = null;
         try {
-            String jpql = "SELECT t FROM Task t.employee.employeeId = " + employeeId;
+            String jpql = "SELECT t FROM Task t WHERE t.employee.employeeId = " + employeeId;
             Query query = em.createQuery(jpql);
             tasks = query.getResultList();
         } catch (NoResultException ex) {
@@ -146,7 +146,7 @@ public class TaskManagement implements TaskManagementRemote, TaskManagementLocal
     public List<SwapTaskPermission> retrieveSwapTaskPermissionsByOwnerId(Long ownerId) {
         List<SwapTaskPermission> swapTaskPermissions = null;
         try {
-            String jpql = "SELECT stp FROM SwapTaskPermission stp.owner.employeeId = " + ownerId;
+            String jpql = "SELECT stp FROM SwapTaskPermission stp WHERE stp.owner.employeeId = " + ownerId;
             Query query = em.createQuery(jpql);
             swapTaskPermissions = query.getResultList();
         } catch (NoResultException ex) {

@@ -20,15 +20,15 @@ public class SwapTaskPermission implements Serializable {
     private Employee owner;
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Employee taker;
-    private Integer bossStatus;
-    private Integer takerStatus;
+    private String bossStatus;
+    private String takerStatus;
     
     public SwapTaskPermission() {
         task = new Task();
         owner = new Employee();
         taker = new Employee();
-        bossStatus = new Integer(-1);
-        takerStatus = new Integer (-1);
+        bossStatus = "";
+        takerStatus = "";
     }
 
     public Long getSwapTaskPermissionId() {
@@ -63,23 +63,22 @@ public class SwapTaskPermission implements Serializable {
         this.taker = taker;
     }
 
-    public Integer getBossStatus() {
+    public String getBossStatus() {
         return bossStatus;
     }
 
-    public void setBossStatus(Integer bossStatus) {
+    public void setBossStatus(String bossStatus) {
         this.bossStatus = bossStatus;
     }
 
-    public Integer getTakerStatus() {
+    public String getTakerStatus() {
         return takerStatus;
     }
 
-    public void setTakerStatus(Integer takerStatus) {
+    public void setTakerStatus(String takerStatus) {
         this.takerStatus = takerStatus;
     }
     
-   
     @Override
     public int hashCode() {
         int hash = 0;

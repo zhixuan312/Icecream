@@ -9,28 +9,28 @@
                 xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp">
     
     <ui:define name="header">
-        <h1>Task Management</h1>
+        <h1>My Task</h1>
     </ui:define>
-        
+    
     <ui:define name="footer">
         
     </ui:define>
-        
+    
     <ui:define name="content">
         
-        <h1>Task Management</h1>  
-            
+        <h1>My Task</h1>  
+        
         <h:form id="formTasks">
             
             <p:messages id="messages" redisplay="false" closable="true" />
-                
+            
             <br />
-                
-            <p:dataTable id="dataTableformTasks" widgetVar="dataTableformTasks" value="#{taskManagedBean.tasks}" var="task" rowKey="#{task.taskId}" rows="10"
+            
+            <p:dataTable id="dataTableformTasks" widgetVar="dataTableformTasks" value="#{myTaskManagedBean.tasks}" var="task" rowKey="#{task.taskId}" rows="10"
                          paginator="true"
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                          rowsPerPageTemplate="5,10,15,20"
-                         emptyMessage="No tasks found with given criteria" filteredValue="#{taskManagedBean.filteredTasks}">
+                         emptyMessage="No tasks found with given criteria" >
                 
                 <f:facet name="header">
                     <p:outputPanel style="text-align: right;">
@@ -38,103 +38,113 @@
                         <p:inputText id="globalFilter" onkeyup="PF('dataTableformTasks').filter()" style="width:150px" placeholder="Enter keyword"/>
                     </p:outputPanel>
                 </f:facet>
-            
+                    
                 <p:column headerText="Task Id" sortBy="#{task.taskId}" filterBy="#{task.taskId}" filterMatchMode="contains" style="width:10%">
                     <h:outputText value="#{task.taskId}" />
                 </p:column>
-                    
+                
                 <p:column headerText="Duration"  sortBy="#{task.duration}" filterBy="#{task.duration}" filterMatchMode="contains" style="width:10%">
                     <h:outputText value="#{task.duration}" />
                 </p:column>
-                    
+                
                 <p:column headerText="Start Time" sortBy="#{task.startDateTime}" filterBy="#{task.startDateTime}" filterMatchMode="contains" style="width:20%">
                     <h:outputText value="#{task.startDateTime}" />
                 </p:column>
-                    
+                
                 <p:column headerText="End Time"  sortBy="#{task.endDateTime}" filterBy="#{task.endDateTime}" filterMatchMode="contains" style="width:20%">
                     <h:outputText value="#{task.endDateTime}" />
                 </p:column>
-                
+                    
                 <p:column headerText="Employee Name"  sortBy="#{task.employee.firstName}" filterBy="#{task.employee.firstName}" filterMatchMode="contains" style="width:15%">
                     <h:outputText value="#{task.employee.firstName}" />
                 </p:column>
                 <f:facet name="footer">
-                    In total there are #{taskManagedBean.tasks.size()} tasks.
+                    In total there are #{myTaskManagedBean.tasks.size()} tasks.
                 </f:facet>
-                    
+                
             </p:dataTable>
+                
             <div align="right">
-                <p:commandButton value="Create New Schedule" icon="ui-icon-plusthick" update="formCreateNewTask" oncomplete="PF('dialogCreateNewTask').show();" />
+                <p:commandButton value="New swap request" icon="ui-icon-plusthick" update="formCreateNewTask" oncomplete="PF('dialogCreateNewTask').show();" />
             </div>
+            <br/><br/>
+            <p:dataTable id="dataTableformPermissions" widgetVar="dataTableformPermissions" value="#{myTaskManagedBean.swapTaskPermissions}" var="swapTaskPermission" rowKey="#{swapTaskPermission.swapTaskPermissionId}"        
+                         emptyMessage="No requests found with given criteria" >
+          
+                <f:facet name="header" >
+                    <div align="left"><h:outputText value="Swap request" style=""/></div> 
+                </f:facet>  
+                
+                <p:column headerText="Task Id" sortBy="#{swapTaskPermission.task.taskId}" style="width:10%">
+                    <h:outputText value="#{swapTaskPermission.task.taskId}" />
+                </p:column>
+                
+                <p:column headerText="Taker's ID"  sortBy="#{swapTaskPermission.taker.employeeId}" style="width:10%">
+                    <h:outputText value="#{swapTaskPermission.taker.employeeId}" />
+                </p:column>
+                    
+                <p:column headerText="Taker's Name" sortBy="#{swapTaskPermission.taker.firstName}" style="width:10%">
+                    <h:outputText value="#{swapTaskPermission.taker.firstName}" />
+                </p:column>
+                
+                <p:column headerText="Taker's Status" sortBy="#{swapTaskPermission.takerStatus}" style="width:10%">
+                    <h:outputText value="#{swapTaskPermission.takerStatus}" />
+                </p:column>   
+                    
+                <p:column headerText="Boss's Status" sortBy="#{swapTaskPermission.bossStatus}" style="width:10%">
+                    <h:outputText value="#{swapTaskPermission.bossStatus}" />
+                </p:column>
+                    
+                <f:facet name="footer">
+                    In total there are #{myTaskManagedBean.swapTaskPermissions.size()} requests.
+                </f:facet>
+                
+            </p:dataTable>
         </h:form>
-            
+        
         <h:form id="formCreateNewTask">
             
             <p:dialog id="dialogCreateNewTask" widgetVar="dialogCreateNewTask" header="Create New Schedule" closable="true">
                 
                 <p:messages id="messagesCreateNewTask" redisplay="false" />
-                
+                    
                 <p:panelGrid>
                     
                     <p:row>
                         <p:column>
-                            <p:outputLabel for="duration" value="Duration: " />
+                            <p:outputLabel for="taskId" value="Task ID: " />
                         </p:column>
                         <p:column>
-                            <p:inputText id="duration" value="#{taskManagedBean.task.duration}" maxlength="255" required="true" requiredMessage="Quantity is required" />
+                            <p:inputText id="taskId" value="#{myTaskManagedBean.taskId}" maxlength="255" required="true" requiredMessage="Task ID is required" />
                         </p:column>
                         <p:column>
-                            <p:message for="duration" />
+                            <p:message for="taskId" />
                         </p:column>
                     </p:row>
-                    
+                        
                     <p:row>
                         <p:column>
-                            <p:outputLabel for="startTime" value="Start Time: " />
+                            <p:outputLabel for="taskTakerId" value="Taker's ID: " />
                         </p:column>
                         <p:column>
-                            <p:calendar id="startTime" value="#{taskManagedBean.startDateTime}" pattern="MM/dd/yyyy HH:mm:ss" />
+                            <p:inputText id="taskTakerId" value="#{myTaskManagedBean.swapTaskTakerId}" maxlength="255" required="true" requiredMessage="Taker's ID is required" />
                         </p:column>
                         <p:column>
-                            <p:message for="startTime" />
+                            <p:message for="taskTakerId" />
                         </p:column>
                     </p:row>
-                    
-                    <p:row>
-                        <p:column>
-                            <p:outputLabel for="endTime" value="Start Time: " />
-                        </p:column>
-                        <p:column>
-                            <p:calendar id="endTime" value="#{taskManagedBean.endDateTime}" pattern="MM/dd/yyyy HH:mm:ss" />
-                        </p:column>
-                        <p:column>
-                            <p:message for="endTime" />
-                        </p:column>
-                    </p:row>
-                    
-                    <p:row>
-                        <p:column>
-                            <p:outputLabel for="assignedEmployee" value="Assigned Employee ID: " />
-                        </p:column>
-                        <p:column>
-                            <p:inputText id="assignedEmployee" value="#{taskManagedBean.taskTakerId}" maxlength="255" required="true" requiredMessage="Quantity is required" />
-                        </p:column>
-                        <p:column>
-                            <p:message for="assignedEmployee" />
-                        </p:column>
-                    </p:row>
-                    
+                        
                     <p:row>
                         <p:column colspan="3">
-                            <p:commandButton id="createNewTask" value="Create" icon="fa-save" actionListener="#{taskManagedBean.createTask()}" update="messagesCreateNewTask" />
+                            <p:commandButton id="createNewTask" value="Submit" icon="fa-save" actionListener="#{myTaskManagedBean.createSwapTaskPermission()}" update="messagesCreateNewTask" />
                         </p:column>
                     </p:row>
-                    
+                        
                 </p:panelGrid>
-                
+                    
             </p:dialog>
-            
+                
         </h:form>
     </ui:define>
-        
+    
 </ui:composition>
