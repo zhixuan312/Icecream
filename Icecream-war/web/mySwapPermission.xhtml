@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./template/defaultTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml">
+    
+    <ui:define name="header">
+        <h1>Swap Request</h1>
+    </ui:define>
+    
+    <ui:define name="footer">
+        
+    </ui:define>
+    
+    <ui:define name="content">
+        
+        <h1>Swap Request</h1>  
+        
+        <h:form id="formPermissions">   
+            <p:messages id="messages" redisplay="false" closable="true" />
+            
+            <br />
+            
+            <p:dataTable id="dataTablePermissions" widgetVar="dataTablePermissions" value="#{requestMeManagedBean.swapTaskPermissions}" var="swapTaskPermission" rowKey="#{swapTaskPermission.swapTaskPermissionId}" rows="10"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20"
+                         >
+                
+                <p:column headerText="Task ID" sortBy="#{swapTaskPermission.task.taskId}" style="width:10%">
+                    <h:outputText value="#{swapTaskPermission.task.taskId}" />
+                </p:column>
+                
+                <p:column headerText="Onwer's Name" sortBy="#{swapTaskPermission.owner.firstName}" style="width:10%">
+                    <h:outputText value="#{swapTaskPermission.owner.firstName}" />
+                </p:column>
+                
+                <p:column headerText="Taker's Name" sortBy="#{swapTaskPermission.taker.firstName}" style="width:10%">
+                    <h:outputText value="#{swapTaskPermission.taker.firstName}" />
+                </p:column>
+                
+                <p:column headerText="Boss Status" sortBy="#{swapTaskPermission.bossStatus}" style="width:10%">
+                    <h:outputText value="#{swapTaskPermission.bossStatus}" />
+                </p:column>
+                
+                <p:column headerText="Taker's Status" sortBy="#{swapTaskPermission.takerStatus}" style="width:10%">
+                    <h:outputText value="#{swapTaskPermission.takerStatus}" />
+                </p:column>
+                
+                <p:column headerText="Action" style="width:7%">
+                    <p:commandButton update="formUpdatePermission" oncomplete="PF('dialogUpdatePermission').show()" icon="ui-icon-pencil" title="Update">
+                        <f:setPropertyActionListener value="#{swapTaskPermission}" target="#{requestMeManagedBean.selectedswapTaskPermission}" />
+                    </p:commandButton>
+                </p:column> 
+                
+                <f:facet name="footer">
+                    In total there are #{requestMeManagedBean.swapTaskPermissions.size()} requests.
+                </f:facet>
+                
+            </p:dataTable>
+        </h:form>
+        
+        
+        
+        
+        <h:form id="formUpdatePermission">
+            
+            <p:dialog id="dialogUpdatePermission" widgetVar="dialogUpdatePermission" header="Update Request" closable="true">
+                
+                <p:messages id="messagesUpdatePermission" redisplay="false" />
+                
+                <p:panelGrid>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Task ID: " />
+                        </p:column>
+                        <p:column>
+                            <h:outputText id="id" value="#{requestMeManagedBean.selectedswapTaskPermission.task.taskId}"/>
+                            <h:inputHidden id="id2" value="#{requestMeManagedBean.selectedswapTaskPermission.swapTaskPermissionId}" required="true" requiredMessage="Task ID is required"/>
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Owner's Name: " />
+                        </p:column>
+                        <p:column>
+                            <h:outputText id="owner" value="#{requestMeManagedBean.selectedswapTaskPermission.owner.firstName}" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Taker's Name: " />
+                        </p:column>
+                        <p:column>
+                            <h:outputText id="taker" value="#{requestMeManagedBean.selectedswapTaskPermission.taker.firstName}" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="My Status: " />
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu value="#{requestMeManagedBean.selectedswapTaskPermission.takerStatus}">
+                                <f:selectItem itemValue="Pending" itemLabel="Pending" />
+                                <f:selectItem itemValue="Approve" itemLabel="Approve" />
+                                <f:selectItem itemValue="Deny" itemLabel="Deny" />
+                            </h:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column colspan="3">
+                            <p:commandButton id="updatePermission" value="Update" icon="fa-save" update="@form formPermissions:dataTablePermissions" ajax="true" actionListener="#{requestMeManagedBean.updateSwapTaskPermission()}" oncomplete="PF('dialogUpdatePermission').show();" />
+                        </p:column>
+                    </p:row>
+                    
+                </p:panelGrid>
+                
+            </p:dialog>
+            
+        </h:form>
+        
+    </ui:define>
+    
+</ui:composition>

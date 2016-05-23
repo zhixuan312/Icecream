@@ -25,9 +25,9 @@ import javax.inject.Inject;
  *
  * @author XUAN
  */
-@Named(value = "myTaskManagedBean")
+@Named(value = "requestMeManagedBean")
 @ViewScoped
-public class MyTaskManagedBean implements Serializable{
+public class RequestMeManagedBean implements Serializable{
     
     @Inject
     private SignUpAndLoginManagedBean signUpAndLoginManagedBean;
@@ -35,19 +35,13 @@ public class MyTaskManagedBean implements Serializable{
     private TaskManagementRemote taskManagementRemote;
     
     private Employee employee;
-    private Task task;
-    private List<Task> tasks;
-    private SwapTaskPermission swapTaskPermission;
+    private SwapTaskPermission selectedswapTaskPermission;
     private List<SwapTaskPermission> swapTaskPermissions;
-    private Long swapTaskTakerId;
-    private Long taskId;
     
-    public MyTaskManagedBean() {
+    public RequestMeManagedBean() {
         employee = new Employee();
-        task = new Task();
-        tasks = new ArrayList<>();
+        selectedswapTaskPermission = new SwapTaskPermission();
         swapTaskPermissions = new ArrayList<>();
-        swapTaskPermission = new SwapTaskPermission();
     }
     
     @PostConstruct
@@ -64,22 +58,21 @@ public class MyTaskManagedBean implements Serializable{
             ex.printStackTrace();
         }
         employee = signUpAndLoginManagedBean.getAccountManagementRemote().getEmployee();
-        System.out.println("###### Employee: " + employee.getEmail());
-        tasks = taskManagementRemote.retrieveTasksByEmployeeId(employee.getEmployeeId());
-        swapTaskPermissions = taskManagementRemote.retrieveSwapTaskPermissionsByOwnerId(employee.getEmployeeId());
+        swapTaskPermissions = taskManagementRemote.retrieveSwapTaskPermissionsByTakerId(employee.getEmployeeId());
     }
     
-    public void createSwapTaskPermission(){
-        Employee taker = signUpAndLoginManagedBean.getAccountManagementRemote().retrieveEmployeeByEmployeeId(swapTaskTakerId);
-        task.setEmployee(taker);
-        swapTaskPermission.setOwner(employee);
-        swapTaskPermission.setTaker(taker);
-        System.out.println("Task ID= " + taskId);
-        Task task = taskManagementRemote.retrieveTaskByTaskId(taskId);
-        swapTaskPermission.setTask(task);
-        swapTaskPermission.setBossStatus("Pending");
-        swapTaskPermission.setTakerStatus("Pending");
-        taskManagementRemote.updateSwapTaskPermission(swapTaskPermission);
+    public void updateSwapTaskPermission(){
+        SwapTaskPermission permission = taskManagementRemote.retrieveSwapTaskPermissionBySwapTaskPermissionId(selectedswapTaskPermission.getSwapTaskPermissionId());
+        permission.setTakerStatus(selectedswapTaskPermission.getTakerStatus());
+        taskManagementRemote.updateSwapTaskPermission(permission);
+        if(permission.getBossStatus().equals("Approve")){
+            if (permission.getTakerStatus().equals("Approve")){
+                Task task = taskManagementRemote.retrieveTaskByTaskId(permission.getTask().getTaskId());
+                task.setEmployee(permission.getTaker());
+                taskManagementRemote.updateTask(task);
+                taskManagementRemote.deleteSwapTaskPermission(permission.getSwapTaskPermissionId());
+            }
+        }
     }
     
     public Employee getEmployee() {
@@ -105,52 +98,20 @@ public class MyTaskManagedBean implements Serializable{
     public void setTaskManagementRemote(TaskManagementRemote taskManagementRemote) {
         this.taskManagementRemote = taskManagementRemote;
     }
-    
-    public List<Task> getTasks() {
-        return tasks;
+
+    public SwapTaskPermission getSelectedswapTaskPermission() {
+        return selectedswapTaskPermission;
     }
-    
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
+
+    public void setSelectedswapTaskPermission(SwapTaskPermission selectedswapTaskPermission) {
+        this.selectedswapTaskPermission = selectedswapTaskPermission;
     }
-    
-    public Task getTask() {
-        return task;
-    }
-    
-    public void setTask(Task task) {
-        this.task = task;
-    }
-    
+
     public List<SwapTaskPermission> getSwapTaskPermissions() {
         return swapTaskPermissions;
     }
-    
+
     public void setSwapTaskPermissions(List<SwapTaskPermission> swapTaskPermissions) {
         this.swapTaskPermissions = swapTaskPermissions;
-    }
-    
-    public SwapTaskPermission getSwapTaskPermission() {
-        return swapTaskPermission;
-    }
-    
-    public void setSwapTaskPermission(SwapTaskPermission swapTaskPermission) {
-        this.swapTaskPermission = swapTaskPermission;
-    }
-    
-    public Long getSwapTaskTakerId() {
-        return swapTaskTakerId;
-    }
-    
-    public void setSwapTaskTakerId(Long swapTaskTakerId) {
-        this.swapTaskTakerId = swapTaskTakerId;
-    }
-    
-    public Long getTaskId() {
-        return taskId;
-    }
-    
-    public void setTaskId(Long taskId) {
-        this.taskId = taskId;
     }
 }

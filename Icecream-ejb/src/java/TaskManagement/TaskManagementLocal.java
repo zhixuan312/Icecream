@@ -30,4 +30,6 @@ public interface TaskManagementLocal {
     
     public Boolean deleteSwapTaskPermission(Long swapTaskPermissionId);
     
+    public List<SwapTaskPermission> retrieveSwapTaskPermissionsByTakerId(Long takerId);
+    
 }

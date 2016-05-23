@@ -55,9 +55,6 @@
                     <h:outputText value="#{task.endDateTime}" />
                 </p:column>
                     
-                <p:column headerText="Employee Name"  sortBy="#{task.employee.firstName}" filterBy="#{task.employee.firstName}" filterMatchMode="contains" style="width:15%">
-                    <h:outputText value="#{task.employee.firstName}" />
-                </p:column>
                 <f:facet name="footer">
                     In total there are #{myTaskManagedBean.tasks.size()} tasks.
                 </f:facet>

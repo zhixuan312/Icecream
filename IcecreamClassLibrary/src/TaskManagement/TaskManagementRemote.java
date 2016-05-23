@@ -29,4 +29,6 @@ public interface TaskManagementRemote {
     public List<SwapTaskPermission> retrieveSwapTaskPermissionsByOwnerId(Long ownerId);
     
     public Boolean deleteSwapTaskPermission(Long swapTaskPermissionId);
+    
+    public List<SwapTaskPermission> retrieveSwapTaskPermissionsByTakerId(Long takerId);
 }

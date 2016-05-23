@@ -156,6 +156,19 @@ public class TaskManagement implements TaskManagementRemote, TaskManagementLocal
     }
     
     @Override
+    public List<SwapTaskPermission> retrieveSwapTaskPermissionsByTakerId(Long takerId) {
+        List<SwapTaskPermission> swapTaskPermissions = null;
+        try {
+            String jpql = "SELECT stp FROM SwapTaskPermission stp WHERE stp.taker.employeeId = " + takerId;
+            Query query = em.createQuery(jpql);
+            swapTaskPermissions = query.getResultList();
+        } catch (NoResultException ex) {
+            ex.printStackTrace();
+        }
+        return swapTaskPermissions;
+    }
+    
+    @Override
     public Boolean deleteSwapTaskPermission(Long swapTaskPermissionId) {
         try {
             SwapTaskPermission swapTaskPermission = em.find(SwapTaskPermission.class, swapTaskPermissionId);
