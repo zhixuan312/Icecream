@@ -7,11 +7,11 @@ package ManagedBean;
 
 import TaskManagement.TaskManagementRemote;
 import entity.Employee;
-import entity.SwapTaskPermission;
 import entity.Task;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -26,9 +26,9 @@ import javax.inject.Inject;
  *
  * @author XUAN
  */
-@Named(value = "myTaskManagedBean")
+@Named(value = "myHistoryManagedBean")
 @ViewScoped
-public class MyTaskManagedBean implements Serializable{
+public class MyHistoryManagedBean implements Serializable{
     
     @Inject
     private SignUpAndLoginManagedBean signUpAndLoginManagedBean;
@@ -36,19 +36,15 @@ public class MyTaskManagedBean implements Serializable{
     private TaskManagementRemote taskManagementRemote;
     
     private Employee employee;
-    private Task task;
     private List<Task> tasks;
-    private SwapTaskPermission swapTaskPermission;
-    private List<SwapTaskPermission> swapTaskPermissions;
-    private Long swapTaskTakerId;
-    private Long taskId;
+    private Double weekHour;
+    private Double monthHour;
     
-    public MyTaskManagedBean() {
+    public MyHistoryManagedBean() {
         employee = new Employee();
-        task = new Task();
         tasks = new ArrayList<>();
-        swapTaskPermissions = new ArrayList<>();
-        swapTaskPermission = new SwapTaskPermission();
+        weekHour = new Double(0);
+        monthHour = new Double(0);
     }
     
     @PostConstruct
@@ -65,32 +61,61 @@ public class MyTaskManagedBean implements Serializable{
             ex.printStackTrace();
         }
         employee = signUpAndLoginManagedBean.getAccountManagementRemote().getEmployee();
-        System.out.println("###### Employee: " + employee.getEmail());
         tasks = listOfTasks();
-        swapTaskPermissions = taskManagementRemote.retrieveSwapTaskPermissionsByOwnerId(employee.getEmployeeId());
+        weekHour = weekHourCal();
+        monthHour = monthHourCal();
     }
     
     public List<Task> listOfTasks(){
         List<Task> tempTasks = taskManagementRemote.retrieveTasksByEmployeeId(employee.getEmployeeId());
-        for (int i = 0; i < tempTasks.size(); i++){
-            if (tempTasks.get(i).getEndDateTime().before(new Date())){
-                tempTasks.remove(i);
-            }
-        }
         return tempTasks;
     }
     
-    public void createSwapTaskPermission(){
-        Employee taker = signUpAndLoginManagedBean.getAccountManagementRemote().retrieveEmployeeByEmployeeId(swapTaskTakerId);
-        task.setEmployee(taker);
-        swapTaskPermission.setOwner(employee);
-        swapTaskPermission.setTaker(taker);
-        System.out.println("Task ID= " + taskId);
-        Task task = taskManagementRemote.retrieveTaskByTaskId(taskId);
-        swapTaskPermission.setTask(task);
-        swapTaskPermission.setBossStatus("Pending");
-        swapTaskPermission.setTakerStatus("Pending");
-        taskManagementRemote.updateSwapTaskPermission(swapTaskPermission);
+    public Double weekHourCal(){
+        double tempWeek = 0;
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE,0);
+        c.set(Calendar.SECOND,0);
+        c.set(Calendar.MILLISECOND,0);
+        Date monday =  c.getTime();
+        
+        c.add(Calendar.DATE, 7);
+        Date monday2 = c.getTime();
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE,0);
+        c.set(Calendar.SECOND,0);
+        c.set(Calendar.MILLISECOND,0);
+        
+        for (int i = 0; i < tasks.size();i ++){
+            if (tasks.get(i).getStartDateTime().after(monday) && tasks.get(i).getEndDateTime().before(monday2)){
+                tempWeek += Double.valueOf(tasks.get(i).getDuration());
+            }
+        }
+        return tempWeek;
+    }
+    
+    public Double monthHourCal(){
+        double tempMonth = 0;
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE,0);
+        c.set(Calendar.SECOND,0);
+        c.set(Calendar.MILLISECOND,0);
+        Date firstDay =  c.getTime();
+        System.out.println("firstDay = " + firstDay);
+
+        c.add(Calendar.MONTH, 1);
+        Date nextFirstDay = c.getTime();
+        System.out.println("nextFirstDay = " + nextFirstDay);
+        for (int i = 0; i < tasks.size();i ++){
+            if (tasks.get(i).getStartDateTime().after(firstDay) && tasks.get(i).getEndDateTime().before(nextFirstDay)){
+                tempMonth += Double.valueOf(tasks.get(i).getDuration());
+            }
+        }
+        return tempMonth;
     }
     
     public Employee getEmployee() {
@@ -125,43 +150,19 @@ public class MyTaskManagedBean implements Serializable{
         this.tasks = tasks;
     }
     
-    public Task getTask() {
-        return task;
+    public Double getWeekHour() {
+        return weekHour;
     }
     
-    public void setTask(Task task) {
-        this.task = task;
+    public void setWeekHour(Double weekHour) {
+        this.weekHour = weekHour;
     }
     
-    public List<SwapTaskPermission> getSwapTaskPermissions() {
-        return swapTaskPermissions;
+    public Double getMonthHour() {
+        return monthHour;
     }
     
-    public void setSwapTaskPermissions(List<SwapTaskPermission> swapTaskPermissions) {
-        this.swapTaskPermissions = swapTaskPermissions;
-    }
-    
-    public SwapTaskPermission getSwapTaskPermission() {
-        return swapTaskPermission;
-    }
-    
-    public void setSwapTaskPermission(SwapTaskPermission swapTaskPermission) {
-        this.swapTaskPermission = swapTaskPermission;
-    }
-    
-    public Long getSwapTaskTakerId() {
-        return swapTaskTakerId;
-    }
-    
-    public void setSwapTaskTakerId(Long swapTaskTakerId) {
-        this.swapTaskTakerId = swapTaskTakerId;
-    }
-    
-    public Long getTaskId() {
-        return taskId;
-    }
-    
-    public void setTaskId(Long taskId) {
-        this.taskId = taskId;
+    public void setMonthHour(Double monthHour) {
+        this.monthHour = monthHour;
     }
 }
