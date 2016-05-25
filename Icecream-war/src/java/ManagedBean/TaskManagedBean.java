@@ -80,6 +80,8 @@ public class TaskManagedBean implements Serializable{
         task.setEmployee(taker);
         task.setStartDateTime(startDateTime);
         task.setEndDateTime(endDateTime);
+        System.out.println("Start DateTime: " + startDateTime);
+        task.setDay(startDateTime.toString().substring(0, 3));
         taskManagementRemote.updateTask(task);
     }
 

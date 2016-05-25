@@ -29,6 +29,7 @@ public class Task implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.PERSIST)
     private Employee employee;
     private String duration;
+    private String day;
     @Temporal(TemporalType.TIMESTAMP)
     private Date startDateTime;
     @Temporal(TemporalType.TIMESTAMP)
@@ -42,6 +43,7 @@ public class Task implements Serializable {
         startDateTime = new Date();
         endDateTime = new Date();
         swapTaskPermissions = new ArrayList<>();
+        day = "";
     }
     
     public Long getTaskId() {
@@ -90,6 +92,14 @@ public class Task implements Serializable {
 
     public void setSwapTaskPermissions(List<SwapTaskPermission> swapTaskPermissions) {
         this.swapTaskPermissions = swapTaskPermissions;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
     }
     
     @Override
